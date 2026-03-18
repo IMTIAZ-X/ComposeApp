@@ -24,7 +24,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
        // Use .get() to pull the value from the provider
-        versionNameSuffix = "-${gitHash.get()}"
+        //versionNameSuffix = "-${gitHash.get()}"
+        versionNameSuffix = ""
     }
 
     buildFeatures {
@@ -38,8 +39,10 @@ android {
             isDebuggable = true
             applicationIdSuffix = ".debug"
             
-            // This adds to the existing "-alpha-hash" suffix
-            versionNameSuffix = "-debug" 
+           
+            val currentHash = gitHash.get()
+            versionNameSuffix = "-debug-$currentHash"
+           // versionNameSuffix = "-debug" 
             
             buildConfigField("String", "BUILD_VARIANT", "\"debug\"")
             buildConfigField("boolean", "ENABLE_LOGGING", "true")
