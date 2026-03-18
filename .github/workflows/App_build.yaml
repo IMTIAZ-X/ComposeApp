@@ -41,7 +41,6 @@ jobs:
 
       - name: Build and Test & Run Lint
         env:
-          # Speed Tip: Increase JVM heap and use the parallel GC
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
         run: |
           ./gradlew lintDebug assembleDebug \
@@ -53,8 +52,6 @@ jobs:
             -Dorg.gradle.vfs.watch=true \
             -Dkotlin.incremental=true \
             -Pandroid.testInstrumentationRunnerArguments.notAnnotation=androidx.test.filters.LargeTest \
-            -Pkotlin.incremental=true \
-            #  -Pandroid.injected.abi.only=arm64-v8a \
             --no-daemon
 
       - name: Upload APK
