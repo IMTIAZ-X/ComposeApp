@@ -44,10 +44,10 @@ jobs:
         run: chmod +x gradlew 
         
       # ADB check
-      - name: Check ADB and Environment
-        run: |
-          adb version
-          java -version
+    #  - name: Check ADB and Environment
+    #    run: |
+    #      adb version
+    #      java -version
           
       # Lint Analysis (Debug & Release)
       
