@@ -1,0 +1,63 @@
+name: App Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Speed Tip: If you have a paid GitHub plan, use 'ubuntu-latest-4-core' 
+    # for significantly faster compilation.
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # Optimization: Prevents the cache from being overwritten on PRs
+          # while still allowing the build to use existing cache.
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          generate-job-summary: false # Tiny overhead reduction
+
+      - name: Build and Test & Run Lint
+        env:
+          # Speed Tip: Increase JVM heap and use the parallel GC
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
+        run: |
+          ./gradlew lintDebug assembleDebug \
+            --parallel \
+            --build-cache \
+            --configuration-cache \
+            --configure-on-demand \
+            -Dorg.gradle.workers.max=4 \
+            -Dorg.gradle.vfs.watch=true \
+          #  -Pandroid.injected.abi.only=arm64-v8a \
+            -Dkotlin.incremental=true \
+            -Pandroid.testInstrumentationRunnerArguments.notAnnotation=androidx.test.filters.LargeTest \
+            -Pkotlin.incremental=true
+            --no-daemon
+
+      - name: Upload APK
+        if: github.event_name == 'push' # Only upload on merge to save time on PRs
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/*.apk
+          compression-level: 0 # No compression = faster upload if the APK is small
