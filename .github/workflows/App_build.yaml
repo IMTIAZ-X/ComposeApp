@@ -53,9 +53,9 @@ jobs:
             -Dorg.gradle.vfs.watch=true \
             -Dkotlin.incremental=true \
             -Pandroid.testInstrumentationRunnerArguments.notAnnotation=androidx.test.filters.LargeTest \
-            -Pkotlin.incremental=true
+            -Pkotlin.incremental=true \
+            #  -Pandroid.injected.abi.only=arm64-v8a \
             --no-daemon
-              #  -Pandroid.injected.abi.only=arm64-v8a \
 
       - name: Upload APK
         if: github.event_name == 'push' # Only upload on merge to save time on PRs
