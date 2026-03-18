@@ -5,20 +5,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// Move the helper function to the top-level of the file
-fun String.runCommand(workingDir: File): String? =
-    try {
-        ProcessBuilder(*split(" ").toTypedArray())
-            .directory(workingDir)
-            .redirectErrorStream(true)
-            .start()
-            .inputStream
-            .bufferedReader()
-            .readText()
-            .trim()
-    } catch (e: Exception) {
-        null
-    }
+//  The Cache-Compatible way to get Git Hash
+val gitHash = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+}.standardOutput.asText.map { it.trim() }.orElse("dev")
 
 android {
     namespace = "com.example.compose"
@@ -33,13 +23,13 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
-        // Get the hash once for use across the block
-        val shortCommitHash = "git rev-parse --short HEAD".runCommand(project.rootDir) ?: "dev"
-        versionNameSuffix = "-alpha-$shortCommitHash"
+       // Use .get() to pull the value from the provider
+        versionNameSuffix = "-${gitHash.get()}"
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     
     buildTypes {
