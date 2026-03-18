@@ -5,6 +5,21 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Move the helper function to the top-level of the file
+fun String.runCommand(workingDir: File): String? =
+    try {
+        ProcessBuilder(*split(" ").toTypedArray())
+            .directory(workingDir)
+            .redirectErrorStream(true)
+            .start()
+            .inputStream
+            .bufferedReader()
+            .readText()
+            .trim()
+    } catch (e: Exception) {
+        null
+    }
+
 android {
     namespace = "com.example.compose"
     compileSdk = 36
@@ -17,11 +32,41 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Get the hash once for use across the block
+        val shortCommitHash = "git rev-parse --short HEAD".runCommand(project.rootDir) ?: "dev"
+        versionNameSuffix = "-alpha-$shortCommitHash"
     }
 
     buildFeatures {
         compose = true
     }
+    
+    buildTypes {
+        debug {
+            isMinifyEnabled = false
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+            
+            // This adds to the existing "-alpha-hash" suffix
+            versionNameSuffix = "-debug" 
+            
+            buildConfigField("String", "BUILD_VARIANT", "\"debug\"")
+            buildConfigField("boolean", "ENABLE_LOGGING", "true")
+        }
+        
+        /* getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            // No need to redeclare hash here, it inherits from defaultConfig
+        } */
+    }
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
