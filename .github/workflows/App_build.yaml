@@ -56,15 +56,15 @@ jobs:
               --configure-on-demand \
               -Dkotlin.incremental=true \
               --no-daemon
-    #      else
-    #        echo "--- PUSH TO MAIN DETECTED: Running Full Release Build ---"
-    #        ./gradlew assembleDebug assembleRelease bundleRelease \
-    #          --parallel \
-    #          --build-cache \
-    #          --configuration-cache \
-    #          --configure-on-demand \
-    #          --no-daemon
-    #      fi
+          else
+            echo "--- PUSH TO MAIN DETECTED: Running Full Release Build ---"
+            ./gradlew assembleDebug assembleRelease bundleRelease \
+              --parallel \
+              --build-cache \
+              --configuration-cache \
+              --configure-on-demand \
+              --no-daemon
+          fi
           
       - name: Make gradlew executable
         run: chmod +x gradlew 
