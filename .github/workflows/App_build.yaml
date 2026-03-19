@@ -49,6 +49,7 @@ jobs:
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
         run: |
+          # শুধু Pull Request এর সময় এই ব্লকটি চলবে
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "--- PULL REQUEST DETECTED: Running Incremental Debug Build ---"
             ./gradlew assembleDebug \
@@ -58,15 +59,18 @@ jobs:
               --configure-on-demand \
               -Dkotlin.incremental=true \
               --no-daemon
-    #      else
-    #        echo "--- PUSH TO MAIN DETECTED: Running Full Release Build ---"
-    #        ./gradlew assembleDebug assembleRelease bundleRelease \
-    #          --parallel \
-    #          --build-cache \
-    #          --configuration-cache \
-    #          --configure-on-demand \
-    #          --no-daemon
           fi
+
+          # ভবিষ্যতে Release ব্যবহার করতে চাইলে নিচের 'if' ব্লকটি আনকমেন্ট করুন
+          # if [[ "${{ github.event_name }}" == "push" ]]; then
+          #   echo "--- PUSH TO MAIN DETECTED: Running Full Release Build ---"
+          #   ./gradlew assembleDebug assembleRelease bundleRelease \
+          #     --parallel \
+          #     --build-cache \
+          #     --configuration-cache \
+          #     --configure-on-demand \
+          #     --no-daemon
+          # fi
           
       - name: Make gradlew executable
         run: chmod +x gradlew 
