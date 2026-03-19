@@ -40,26 +40,26 @@ jobs:
           cache-overwrite-existing: false
           generate-job-summary: true
       
-      - name: Make gradlew executable
-        run: chmod +x gradlew
+    #  - name: Make gradlew executable
+    #    run: chmod +x gradlew
         
         # যদি এটি শুধু একটি Pull Request হয়, তবে শুধু Debug বিল্ড হবে (সময় বাঁচবে)
           # যদি এটি Main ব্রাঞ্চে Push হয় (Release এর সময়), তবে সব কিছু বিল্ড হবে
-      - name: Smart Build Strategy
-        env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
-        run: |
+    #  - name: Smart Build Strategy
+    #    env:
+    #      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
+    #    run: |
           # শুধু Pull Request এর সময় এই ব্লকটি চলবে
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "--- PULL REQUEST DETECTED: Running Incremental Debug Build ---"
-            ./gradlew assembleDebug \
-              --parallel \
-              --build-cache \
-              --configuration-cache \
-              --configure-on-demand \
-              -Dkotlin.incremental=true \
-              --no-daemon
-          fi
+    #      if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+    #        echo "--- PULL REQUEST DETECTED: Running Incremental Debug Build ---"
+    #        ./gradlew assembleDebug \
+    #          --parallel \
+    #          --build-cache \
+    #          --configuration-cache \
+    #          --configure-on-demand \
+    #          -Dkotlin.incremental=true \
+    #          --no-daemon
+    #      fi
 
           # ভবিষ্যতে Release ব্যবহার করতে চাইলে নিচের 'if' ব্লকটি আনকমেন্ট করুন
           # if [[ "${{ github.event_name }}" == "push" ]]; then
@@ -92,26 +92,30 @@ jobs:
     #        --configuration-cache \
     #        --stacktrace
 
-      - name: Build and Test & Run Lint
-        env:
+    #  - name: Build and Test & Run Lint
+    #    env:
           # Speed Tip: Increase JVM heap and use the parallel GC
           
            #-Pkotlin.incremental=true \
             #  -Pandroid.injected.abi.only=arm64-v8a \
             #./gradlew assembleDebug assembleRelease bundleRelease \
             #./gradlew lintDebug assembleDebug \
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
-        run: |
-          ./gradlew assembleDebug \
-            --parallel \
-            --build-cache \
-            --configuration-cache \
-            --configure-on-demand \
-            -Dorg.gradle.workers.max=4 \
-            -Dorg.gradle.vfs.watch=true \
-            -Dkotlin.incremental=true \
-            -Pandroid.testInstrumentationRunnerArguments.notAnnotation=androidx.test.filters.LargeTest \
-            --no-daemon
+    #      GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
+    #    run: |
+    #      ./gradlew assembleDebug \
+    #        --parallel \
+    #        --build-cache \
+    #        --configuration-cache \
+    #        --configure-on-demand \
+    #        -Dorg.gradle.workers.max=4 \
+    #        -Dorg.gradle.vfs.watch=true \
+    #        -Dkotlin.incremental=true \
+    #        -Pandroid.testInstrumentationRunnerArguments.notAnnotation=androidx.test.filters.LargeTest \
+    #        --no-daemon
+            
+        # 7. Build Debug APK
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --parallel --build-cache --stacktrace
             
       # Lint results
     #  - name: Upload Quality Reports
