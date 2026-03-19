@@ -40,12 +40,14 @@ jobs:
           cache-overwrite-existing: false
           generate-job-summary: true
       
+      
+        # যদি এটি শুধু একটি Pull Request হয়, তবে শুধু Debug বিল্ড হবে (সময় বাঁচবে)
+          # যদি এটি Main ব্রাঞ্চে Push হয় (Release এর সময়), তবে সব কিছু বিল্ড হবে
       - name: Smart Build Strategy
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC"
         run: |
-          # যদি এটি শুধু একটি Pull Request হয়, তবে শুধু Debug বিল্ড হবে (সময় বাঁচবে)
-          # যদি এটি Main ব্রাঞ্চে Push হয় (Release এর সময়), তবে সব কিছু বিল্ড হবে
+        
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "Running Incremental Debug Build..."
             ./gradlew assembleDebug \
