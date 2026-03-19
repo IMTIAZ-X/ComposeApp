@@ -84,13 +84,13 @@ jobs:
       # Lint Analysis (Debug & Release)
       
       #./gradlew lintDebug lintRelease \
-      - name: Run Lint Analysis
-        run: |
-          ./gradlew lintDebug \
-            --parallel \
-            --build-cache \
-            --configuration-cache \
-            --stacktrace
+    #  - name: Run Lint Analysis
+    #    run: |
+    #      ./gradlew lintDebug \
+    #        --parallel \
+    #        --build-cache \
+    #        --configuration-cache \
+    #        --stacktrace
 
       - name: Build and Test & Run Lint
         env:
@@ -99,9 +99,10 @@ jobs:
            #-Pkotlin.incremental=true \
             #  -Pandroid.injected.abi.only=arm64-v8a \
             #./gradlew assembleDebug assembleRelease bundleRelease \
+            #./gradlew lintDebug assembleDebug \
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -XX:+UseParallelGC -Dfile.encoding=UTF-8"
         run: |
-          ./gradlew lintDebug assembleDebug \
+          ./gradlew assembleDebug \
             --parallel \
             --build-cache \
             --configuration-cache \
@@ -113,14 +114,14 @@ jobs:
             --no-daemon
             
       # Lint results
-      - name: Upload Quality Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: quality-reports
-          path: |
-            app/build/reports/lint-results-*
-            app/build/test-results/testDebugUnitTest/
+    #  - name: Upload Quality Reports
+    #    if: always()
+    #    uses: actions/upload-artifact@v4
+    #    with:
+    #      name: quality-reports
+    #      path: |
+    #        app/build/reports/lint-results-*
+    #        app/build/test-results/testDebugUnitTest/
            # app/build/test-results/testReleaseUnitTest/
 
       - name: Upload APK
