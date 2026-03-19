@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Text
 import com.example.compose.ui.theme.ComposeApp
 
 class MainActivity : ComponentActivity() {
