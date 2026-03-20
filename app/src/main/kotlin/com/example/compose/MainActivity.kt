@@ -24,6 +24,6 @@ class MainActivity : ComponentActivity() {
 fun myapp(){
     Text(
         text = "Hello World",
-        fontSize = 35.sp
+        fontSize = 18.sp
     )
 }
